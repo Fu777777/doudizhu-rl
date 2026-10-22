@@ -1,0 +1,14 @@
+专家数据：3000 局，44784 个样本，专家胜率 60.9%
+  BC epoch  1 | loss 0.2780 | 训练集动作一致率 94.0%
+  BC epoch  2 | loss 0.0463 | 训练集动作一致率 99.1%
+  BC epoch  3 | loss 0.0357 | 训练集动作一致率 99.2%
+  BC epoch  4 | loss 0.0264 | 训练集动作一致率 99.4%
+  BC epoch  5 | loss 0.0219 | 训练集动作一致率 99.5%
+  BC epoch  6 | loss 0.0187 | 训练集动作一致率 99.5%
+  BC epoch  7 | loss 0.0194 | 训练集动作一致率 99.5%
+  BC epoch  8 | loss 0.0158 | 训练集动作一致率 99.6%
+  BC epoch  9 | loss 0.0137 | 训练集动作一致率 99.6%
+  BC epoch 10 | loss 0.0124 | 训练集动作一致率 99.6%
+BC 模型评估(对规则农民200局) 58.5% | 用时 12s
+已保存 checkpoints/bc_s2.pt checkpoints/expert.pt
+WALL 13 s | cmd: python imitation.py --games 3000 --epochs 10 --seed 2 --name bc_s2

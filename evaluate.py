@@ -14,6 +14,10 @@ def play(env, policy, games, seed):
     wins = 0
     for g in range(games):
         obs, info = env.reset(seed=seed + g)  # 同一组种子 => 各策略面对相同的牌局
+        # 审核修复：随机农民每局按局号重新播种，使结果与“先评估了哪些模型”无关（原实现 rng 状态跨模型延续）
+        for i, opp in enumerate(env.opponents):
+            if hasattr(opp, "rng"):
+                opp.rng = np.random.default_rng((seed + g) * 10 + i)
         done = False
         while not done:
             obs, r, done, _, info = env.step(policy(obs, info["action_mask"], env))

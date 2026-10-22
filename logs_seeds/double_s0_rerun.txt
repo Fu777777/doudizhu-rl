@@ -1,0 +1,8 @@
+[double] ep   500 | 训练近500局胜率 27.6% | eps 0.55 | loss 0.0052 | 评估(对规则农民200局) 3.5% | 33s
+[double] ep  1000 | 训练近500局胜率 32.4% | eps 0.11 | loss 0.0107 | 评估(对规则农民200局) 7.5% | 85s
+[double] ep  1500 | 训练近500局胜率 25.4% | eps 0.05 | loss 0.0153 | 评估(对规则农民200局) 7.0% | 130s
+[double] ep  2000 | 训练近500局胜率 18.0% | eps 0.05 | loss 0.0197 | 评估(对规则农民200局) 6.0% | 175s
+[double] ep  2500 | 训练近500局胜率 13.4% | eps 0.05 | loss 0.0283 | 评估(对规则农民200局) 7.5% | 213s
+[double] ep  3000 | 训练近500局胜率 17.0% | eps 0.05 | loss 0.0335 | 评估(对规则农民200局) 7.5% | 249s
+模型已保存: checkpoints/rerun_double_s0.pt
+WALL 251 s | cmd: python train.py --algo double --seed 0 --name rerun_double_s0

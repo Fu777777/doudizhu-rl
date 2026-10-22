@@ -1,0 +1,8 @@
+[double] ep   500 | 训练近500局胜率 29.0% | eps 0.54 | loss 0.0053 | 评估(对规则农民200局) 8.0% | 33s
+[double] ep  1000 | 训练近500局胜率 31.4% | eps 0.11 | loss 0.0095 | 评估(对规则农民200局) 7.0% | 73s
+[double] ep  1500 | 训练近500局胜率 25.4% | eps 0.05 | loss 0.0162 | 评估(对规则农民200局) 5.5% | 119s
+[double] ep  2000 | 训练近500局胜率 18.8% | eps 0.05 | loss 0.0223 | 评估(对规则农民200局) 4.5% | 161s
+[double] ep  2500 | 训练近500局胜率 16.8% | eps 0.05 | loss 0.0287 | 评估(对规则农民200局) 8.5% | 199s
+[double] ep  3000 | 训练近500局胜率 18.0% | eps 0.05 | loss 0.0344 | 评估(对规则农民200局) 9.0% | 235s
+模型已保存: checkpoints/double_s2.pt
+WALL 237 s | cmd: python train.py --algo double --seed 2 --name double_s2

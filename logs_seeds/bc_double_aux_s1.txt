@@ -1,0 +1,9 @@
+从预训练权重初始化: checkpoints/bc_s1.pt
+[double] ep   500 | 训练近500局胜率 67.4% | eps 0.14 | loss 0.7504 | 评估(对规则农民200局) 58.0% | 40s
+[double] ep  1000 | 训练近500局胜率 63.6% | eps 0.07 | loss 0.2622 | 评估(对规则农民200局) 60.0% | 79s
+[double] ep  1500 | 训练近500局胜率 59.2% | eps 0.05 | loss 0.2036 | 评估(对规则农民200局) 60.0% | 116s
+[double] ep  2000 | 训练近500局胜率 60.6% | eps 0.05 | loss 0.2027 | 评估(对规则农民200局) 58.0% | 153s
+[double] ep  2500 | 训练近500局胜率 58.6% | eps 0.05 | loss 0.1760 | 评估(对规则农民200局) 58.5% | 189s
+[double] ep  3000 | 训练近500局胜率 56.6% | eps 0.05 | loss 0.1810 | 评估(对规则农民200局) 57.5% | 225s
+模型已保存: checkpoints/bc_double_aux_s1.pt
+WALL 227 s | cmd: python train.py --algo double --init checkpoints/bc_s1.pt --eps-start 0.2 --bc-weight 1.0 --seed 1 --name bc_double_aux_s1

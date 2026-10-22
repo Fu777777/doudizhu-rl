@@ -57,6 +57,7 @@ def main():
     ap.add_argument("--epochs", type=int, default=10)
     ap.add_argument("--dueling", action="store_true")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--name", default=None, help="输出模型名，默认 bc / bc_dueling（多种子实验用）")
     args = ap.parse_args()
     random.seed(args.seed); np.random.seed(args.seed); torch.manual_seed(args.seed)
     torch.set_num_threads(1)
@@ -68,7 +69,7 @@ def main():
     wr = play(env, lambda o, m, e: agent.act(o, m, greedy=True), 200, 50_000)
     print(f"BC 模型评估(对规则农民200局) {wr:.1%} | 用时 {time.time() - t0:.0f}s")
     os.makedirs("checkpoints", exist_ok=True)
-    name = "bc_dueling" if args.dueling else "bc"
+    name = args.name or ("bc_dueling" if args.dueling else "bc")
     agent.save(f"checkpoints/{name}.pt")
     torch.save(data, "checkpoints/expert.pt")
     print("已保存", f"checkpoints/{name}.pt", "checkpoints/expert.pt")
