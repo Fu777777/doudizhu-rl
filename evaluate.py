@@ -23,7 +23,8 @@ def play(env, policy, games, seed):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--models", nargs="*", default=["checkpoints/dqn.pt", "checkpoints/double_dqn.pt"])
+    ap.add_argument("--models", nargs="*", default=["checkpoints/dqn.pt", "checkpoints/double_dqn.pt", "checkpoints/dueling_double.pt",
+                                                     "checkpoints/bc.pt", "checkpoints/bc_double.pt", "checkpoints/bc_double_aux.pt"])
     ap.add_argument("--games", type=int, default=1000)
     ap.add_argument("--seed", type=int, default=10_000)  # 与训练种子区间不重叠
     args = ap.parse_args()

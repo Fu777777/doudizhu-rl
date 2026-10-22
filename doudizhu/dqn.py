@@ -10,16 +10,24 @@ from .cards import NUM_ACTIONS
 
 
 class QNet(nn.Module):
-    """简单 MLP：状态 -> 每个动作的 Q 值。"""
+    """MLP：状态 -> 每个动作的 Q 值。dueling=True 时拆成 V(s) + A(s,a) - mean(A)。"""
 
-    def __init__(self, obs_dim, hidden=256):
+    def __init__(self, obs_dim, hidden=256, dueling=False):
         super().__init__()
-        self.net = nn.Sequential(nn.Linear(obs_dim, hidden), nn.ReLU(),
-                                 nn.Linear(hidden, hidden), nn.ReLU(),
-                                 nn.Linear(hidden, NUM_ACTIONS))
+        self.dueling = dueling
+        self.body = nn.Sequential(nn.Linear(obs_dim, hidden), nn.ReLU(),
+                                  nn.Linear(hidden, hidden), nn.ReLU())
+        self.adv = nn.Linear(hidden, NUM_ACTIONS)   # 普通 DQN 时就是 Q 头
+        if dueling:
+            self.val = nn.Linear(hidden, 1)          # 状态价值 V(s)
 
     def forward(self, x):
-        return self.net(x)
+        h = self.body(x)
+        a = self.adv(h)
+        if not self.dueling:
+            return a
+        # 减去均值保证 V/A 可辨识（Wang et al. 2016）
+        return self.val(h) + a - a.mean(1, keepdim=True)
 
 
 class ReplayBuffer:
@@ -41,10 +49,12 @@ class ReplayBuffer:
 
 
 class DQNAgent:
-    def __init__(self, obs_dim, double=False, lr=1e-3, gamma=0.99, batch=128,
+    def __init__(self, obs_dim, double=False, dueling=False, lr=1e-3, gamma=0.99, batch=128,
                  buffer=50000, target_update=500, eps_start=1.0, eps_end=0.05, eps_decay_steps=20000):
-        self.q = QNet(obs_dim)
-        self.target = QNet(obs_dim)
+        self.q = QNet(obs_dim, dueling=dueling)
+        self.target = QNet(obs_dim, dueling=dueling)
+        self.expert = None      # 可选：专家数据 (s, a, mask)，用于微调时的行为克隆辅助损失
+        self.bc_weight = 0.0
         self.target.load_state_dict(self.q.state_dict())
         self.opt = torch.optim.Adam(self.q.parameters(), lr=lr)
         self.buffer = ReplayBuffer(buffer)
@@ -85,6 +95,12 @@ class DQNAgent:
                 q_next = q_next_t.masked_fill(~m2, -1e9).max(1).values
             target = r + self.gamma * (1 - d) * q_next
         loss = nn.functional.smooth_l1_loss(q_sa, target)
+        if self.expert is not None and self.bc_weight > 0:
+            # DQfD 风格：微调时继续在专家数据上加一项交叉熵，防止预训练知识被自举误差冲掉
+            es, ea, em = self.expert
+            idx = torch.randint(len(es), (self.batch,))
+            logits = self.q(es[idx]).masked_fill(~em[idx], -1e9)
+            loss = loss + self.bc_weight * nn.functional.cross_entropy(logits, ea[idx])
         self.opt.zero_grad()
         loss.backward()
         nn.utils.clip_grad_norm_(self.q.parameters(), 10.0)
@@ -94,7 +110,17 @@ class DQNAgent:
         return loss.item()
 
     def save(self, path):
-        torch.save(self.q.state_dict(), path)
+        torch.save({"state": self.q.state_dict(), "dueling": self.q.dueling}, path)
 
     def load(self, path):
-        self.q.load_state_dict(torch.load(path))
+        """兼容旧格式（只存 state_dict）；返回后 target 也同步。"""
+        ck = torch.load(path)
+        if "state" not in ck:
+            ck = {"state": {k.replace("net.0", "body.0").replace("net.2", "body.2").replace("net.4", "adv"): v
+                            for k, v in ck.items()}, "dueling": False}
+        if ck["dueling"] != self.q.dueling:
+            self.q = QNet(self.q.body[0].in_features, dueling=ck["dueling"])
+            self.target = QNet(self.q.body[0].in_features, dueling=ck["dueling"])
+            self.opt = torch.optim.Adam(self.q.parameters(), lr=self.opt.param_groups[0]["lr"])
+        self.q.load_state_dict(ck["state"])
+        self.target.load_state_dict(ck["state"])

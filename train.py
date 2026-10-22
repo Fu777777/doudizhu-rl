@@ -19,11 +19,21 @@ def main():
     ap.add_argument("--episodes", type=int, default=3000)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--eval-every", type=int, default=500)
+    ap.add_argument("--dueling", action="store_true", help="使用 Dueling 网络结构")
+    ap.add_argument("--init", default=None, help="用预训练(BC)权重初始化，如 checkpoints/bc.pt")
+    ap.add_argument("--eps-start", type=float, default=1.0, help="BC 初始化时建议调小，如 0.2")
+    ap.add_argument("--bc-weight", type=float, default=0.0, help="微调时专家交叉熵辅助损失权重")
+    ap.add_argument("--name", default=None, help="输出模型名，默认按算法命名")
     args = ap.parse_args()
     random.seed(args.seed); np.random.seed(args.seed); torch.manual_seed(args.seed)
     torch.set_num_threads(1)
 
-    agent = DQNAgent(OBS_DIM, double=args.algo == "double")
+    agent = DQNAgent(OBS_DIM, double=args.algo == "double", dueling=args.dueling, eps_start=args.eps_start)
+    if args.init:
+        agent.load(args.init)  # 行为克隆预训练权重 -> 在线网络与目标网络
+        print("从预训练权重初始化:", args.init)
+    if args.bc_weight > 0:
+        agent.expert, agent.bc_weight = torch.load("checkpoints/expert.pt"), args.bc_weight
     rule_env = DoudizhuEnv([RuleAgent(), RuleAgent()])
     rand_env = DoudizhuEnv([RandomAgent(1), RandomAgent(2)])
     eval_env = DoudizhuEnv([RuleAgent(), RuleAgent()])
@@ -53,7 +63,8 @@ def main():
             wins = 0
 
     os.makedirs("checkpoints", exist_ok=True)
-    path = f"checkpoints/{'double_dqn' if args.algo == 'double' else 'dqn'}.pt"
+    name = args.name or ("double_dqn" if args.algo == "double" else "dqn")
+    path = f"checkpoints/{name}.pt"
     agent.save(path)
     print("模型已保存:", path)
 

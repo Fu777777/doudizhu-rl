@@ -3,8 +3,16 @@
   规则地主                         地主胜率 58.9%
   checkpoints/dqn.pt           地主胜率 4.7%
   checkpoints/double_dqn.pt    地主胜率 8.1%
+  checkpoints/dueling_double.pt 地主胜率 7.0%
+  checkpoints/bc.pt            地主胜率 58.6%
+  checkpoints/bc_double.pt     地主胜率 14.2%
+  checkpoints/bc_double_aux.pt 地主胜率 56.0%
 == 对手: 随机农民，1000 局 ==
   随机地主                         地主胜率 36.4%
   规则地主                         地主胜率 93.8%
   checkpoints/dqn.pt           地主胜率 52.2%
   checkpoints/double_dqn.pt    地主胜率 59.5%
+  checkpoints/dueling_double.pt 地主胜率 56.9%
+  checkpoints/bc.pt            地主胜率 95.4%
+  checkpoints/bc_double.pt     地主胜率 67.4%
+  checkpoints/bc_double_aux.pt 地主胜率 84.7%

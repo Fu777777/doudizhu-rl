@@ -1,0 +1,13 @@
+专家数据：3000 局，44784 个样本，专家胜率 60.9%
+  BC epoch  1 | loss 0.2714 | 训练集动作一致率 94.1%
+  BC epoch  2 | loss 0.0469 | 训练集动作一致率 99.1%
+  BC epoch  3 | loss 0.0304 | 训练集动作一致率 99.3%
+  BC epoch  4 | loss 0.0270 | 训练集动作一致率 99.3%
+  BC epoch  5 | loss 0.0201 | 训练集动作一致率 99.5%
+  BC epoch  6 | loss 0.0187 | 训练集动作一致率 99.5%
+  BC epoch  7 | loss 0.0184 | 训练集动作一致率 99.5%
+  BC epoch  8 | loss 0.0137 | 训练集动作一致率 99.6%
+  BC epoch  9 | loss 0.0146 | 训练集动作一致率 99.6%
+  BC epoch 10 | loss 0.0131 | 训练集动作一致率 99.6%
+BC 模型评估(对规则农民200局) 60.0% | 用时 12s
+已保存 checkpoints/bc.pt checkpoints/expert.pt
